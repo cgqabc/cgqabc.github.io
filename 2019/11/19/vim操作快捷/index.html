@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="Alan's Blog" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1、移动： gg 到第一行 NG 到第N行，如5G，也可以写成:5，到第五行 G到最后一行 0 数字零，到行头 ^到本行第一个不是blank字符的位置（所谓blank字符就是空格，tab，换行，回车等）$ 到本行行尾 g_ 到本行最后一个不是blank字符的位置 w 到下一个单词的开头如果单词是有blank等字符分割，那需要使用W大写 e 到下一个单词的结尾如果单词是有blank等字符分割，那需要">
+<meta name="keywords" content="blog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vim快捷操作">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;19&#x2F;vim%E6%93%8D%E4%BD%9C%E5%BF%AB%E6%8D%B7&#x2F;index.html">
+<meta property="og:site_name" content="Alan&#39;s Blog">
+<meta property="og:description" content="1、移动： gg 到第一行 NG 到第N行，如5G，也可以写成:5，到第五行 G到最后一行 0 数字零，到行头 ^到本行第一个不是blank字符的位置（所谓blank字符就是空格，tab，换行，回车等）$ 到本行行尾 g_ 到本行最后一个不是blank字符的位置 w 到下一个单词的开头如果单词是有blank等字符分割，那需要使用W大写 e 到下一个单词的结尾如果单词是有blank等字符分割，那需要">
+<meta property="og:locale" content="zh">
+<meta property="og:updated_time" content="2019-11-19T02:15:46.140Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/19/vim%E6%93%8D%E4%BD%9C%E5%BF%AB%E6%8D%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>vim快捷操作 | Alan's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Alan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/19/vim%E6%93%8D%E4%BD%9C%E5%BF%AB%E6%8D%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jfif">
+      <meta itemprop="name" content="Alan Cao">
+      <meta itemprop="description" content="Alan's Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alan's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vim快捷操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2019-11-19 09:39:39 / Modified: 10:15:46" itemprop="dateCreated datePublished" datetime="2019-11-19T09:39:39+08:00">2019-11-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Testing/" itemprop="url" rel="index">
+                    <span itemprop="name">Testing</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>1、移动： gg 到第一行 NG 到第N行，如5G，也可以写成:5，到第五行 G<br>到最后一行 0 数字零，到行头 ^<br>到本行第一个不是blank字符的位置（所谓blank字符就是空格，tab，换行，回车等）<br>$ 到本行行尾 g_ 到本行最后一个不是blank字符的位置 w 到下一个单词的开头<br>如果单词是有blank等字符分割，那需要使用W大写 e 到下一个单词的结尾<br>如果单词是有blank等字符分割，那需要使用E大写 %<br>匹配括号移动，包括(,[,{,需要把光标移动到括号上) <em>和#<br>匹配光标当前所在的单词，移动光标到下一个或上一个。</em>是下一个，#是上一个<br>0y$ 表示从行头拷贝到本行最后一个字符 fa<br>到下一个为a的字符处，已可以fs到下个s的字符 t,<br>到逗号前的第一个字符，逗号可以变成其他字符 3fa 在当前行查找第三个出现的a<br>dt” 删除所有的内容，直到遇到双引号” 2、操作 r 替换 y 拷贝，yy拷贝当行 v<br>可视化的选择 P 粘贴在当前位置之前，小p表示粘贴在当前位置之后 d<br>删除，dd删除本行（剪切） gU 变大写 gu 变小写 a 在光标后插入 i<br>在光标前插入 o 在当前行后插入一个新行 O 大写o在当前行前面插入一个新行 cw<br>替换从光标所在位置到最后一个单词结尾的字符 . 小数点，可以重复上一次命令<br>N<command> 重复某个命令N次，如3p粘贴3次，2dd删除2行 3、文件打开退出 :e<br>打开一个文件 :w 保存 :saveas 另存为 :x,ZZ或wq<br>保存并退出，ZZ不需要输入冒号和回车 :q! 退出不保存，:qa!强制退出 :bn 和<br>:bq 打开多个文件时切换上下文件，:n到下一个文件<br>4、区域选择 <action>a<object> 和 <action>i<object><br>action可以是任何的命令，如 d (删除), y (拷贝), v (可以视模式选择) object<br>可能是： w 一个单词， W 一个以空格为分隔的单词， s 一个句字， p<br>一个段落。也可以是一个特别的字符：”、 ‘、 )、 }、 ]<br>a是包括对象，i是不包括对象 5、块操作 ctrl + q (windows环境）或 ctrl + v<br>（linux环境） 如 0 ctrl+q I– [esc]<br>输入0到行首，ctrl+q进入块操作，移动光标选择，I–插入”–”,按esc键让每行都生效<br>在后面插入则A– 6、自动提示 ctrl + n和ctrl + p<br>在输入模式下，已经输入过的单词可用这个自动补齐 7、可视化操作<br>用v（可按alt选某列）或V（整行操作）或ctrl+q（v）进入可视化操作后，选中操作行后可以执行<br>J 把所有行连接起来变成一行 &lt;或&gt; 左右缩进 = 自动给缩进</p>
+<p>8、分屏 :split 创建分屏，:vsplit 创建垂直分屏 ctrl+w +<br>方向，用来切换分屏 ctrl+w + _或| 最大化尺寸 |垂直分屏 ctrl+w + +或-<br>增加尺寸 9、其他操作 :set ff=dos 或ulinx 设置文件格式 :set<br>fileencoding=utf-8 设置文件编码 :set list 设置显示模式，显示特殊符号 :ga<br>显示所在字符的ascii值，分别以十进制，十六进制，八进制表示。 :%<br>s/test/alan/g 全局替换，:% s#/app/log#/app/pty#g<br>全局替换路径，用#隔开，也可以用其他符号 u 撤销，uu恢复初始状态，ctrl+r<br>重做，恢复撤销的命令<br>在ggVG可视模块话操作下，直接按’=’可以自动缩进，实现代码格式化。python不建议使用</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/18/hello-world/" rel="next" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Alan Cao"
+      src="/images/touxiang.jfif">
+  <p class="site-author-name" itemprop="name">Alan Cao</p>
+  <div class="site-description" itemprop="description">Alan's Blog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cgqabc" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cgqabc" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:cgqabc@gmail.com" title="E-Mail → mailto:cgqabc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan Cao</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
