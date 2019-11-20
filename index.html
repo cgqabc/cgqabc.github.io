@@ -332,7 +332,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2019-11-19 14:39:39 / 修改时间：14:53:53" itemprop="dateCreated datePublished" datetime="2019-11-19T14:39:39+08:00">2019-11-19</time>
+              <time title="创建时间：2019-11-19 14:39:39 / 修改时间：14:55:56" itemprop="dateCreated datePublished" datetime="2019-11-19T14:39:39+08:00">2019-11-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -380,6 +380,325 @@
           <h1 id="docker-1-13使用devicemapper存储安装"><a href="#docker-1-13使用devicemapper存储安装" class="headerlink" title="docker 1.13使用devicemapper存储安装"></a>docker 1.13使用devicemapper存储安装</h1><h2 id="无需重启识别硬盘"><a href="#无需重启识别硬盘" class="headerlink" title="无需重启识别硬盘"></a>无需重启识别硬盘</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">echo &quot;- - -&quot; &gt; /sys/class/scsi_host/host0/scan</span><br><span class="line">echo &quot;- - -&quot; &gt; /sys/class/scsi_host/host1/scan</span><br><span class="line">echo &quot;- - -&quot; &gt; /sys/class/scsi_host/host2/scan</span><br><span class="line"></span><br><span class="line">`</span><br></pre></td></tr></table></figure>
 
 <h2 id="安装脚本"><a href="#安装脚本" class="headerlink" title="安装脚本"></a>安装脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">set -e</span><br><span class="line">command_exists() &#123;</span><br><span class="line">  command -v &quot;$@&quot; &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if [ -z &quot;$1&quot; ];</span><br><span class="line">then</span><br><span class="line">    echo &apos;Error: you should install with params, like:&apos;</span><br><span class="line">    echo &apos;sh update-docker-devicemapper.sh /dev/sdb&apos;</span><br><span class="line">    exit 0</span><br><span class="line">fi</span><br><span class="line">if ! command_exists docker; then</span><br><span class="line">    echo &gt;&amp;2 &apos;Error: this installer needs docker. You should install docker first.&apos;</span><br><span class="line">    echo &apos;please use command sh install-docker.sh [k8s-master-ip]&apos;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;###############install disk $1...#########################&quot;</span><br><span class="line">fdisk $1&lt;&lt;EOF   </span><br><span class="line">n               #创建主分区  </span><br><span class="line">p</span><br><span class="line">1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">w  </span><br><span class="line">EOF</span><br><span class="line">_arg=$1&quot;1&quot;</span><br><span class="line">pvcreate $_arg</span><br><span class="line">vgcreate docker $_arg</span><br><span class="line">lvcreate --wipesignatures y -n thinpool docker -l 95%VG</span><br><span class="line">lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG</span><br><span class="line">lvconvert -y --zero n -c 512K --thinpool docker/thinpool --poolmetadata docker/thinpoolmeta</span><br><span class="line">cat &gt; /etc/lvm/profile/docker-thinpool.profile &lt;&lt;EOF</span><br><span class="line">activation &#123;</span><br><span class="line">  thin_pool_autoextend_threshold=80</span><br><span class="line">  thin_pool_autoextend_percent=20</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">lvchange --metadataprofile docker-thinpool docker/thinpool</span><br><span class="line">lvs -o+seg_monitor</span><br><span class="line">echo &quot;###############config docker.service and restart...#################&quot;</span><br><span class="line">cp /usr/lib/systemd/system/docker.service  /usr/lib/systemd/system/docker.service.bak</span><br><span class="line">cat &gt; /usr/lib/systemd/system/docker.service &lt;&lt;EOF</span><br><span class="line">[Unit]</span><br><span class="line">Description=Docker Application Container Engine</span><br><span class="line">Documentation=https://docs.docker.com</span><br><span class="line">After=network.target firewalld.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=notify</span><br><span class="line"># the default is not to use systemd for cgroups because the delegate issues still</span><br><span class="line"># exists and systemd currently does not support the cgroup feature set required</span><br><span class="line"># for containers run by docker</span><br><span class="line">ExecStart=/usr/bin/dockerd \$OPTIONS \\</span><br><span class="line">--storage-driver=devicemapper \\</span><br><span class="line">--storage-opt=dm.thinpooldev=/dev/mapper/docker-thinpool \\</span><br><span class="line">--storage-opt=dm.use_deferred_removal=true \\</span><br><span class="line">--storage-opt=dm.use_deferred_deletion=true</span><br><span class="line">ExecReload=/bin/kill -s HUP \$MAINPID</span><br><span class="line"># Having non-zero Limit*s causes performance problems due to accounting overhead</span><br><span class="line"># in the kernel. We recommend using cgroups to do container-local accounting.</span><br><span class="line">LimitNOFILE=infinity</span><br><span class="line">LimitNPROC=infinity</span><br><span class="line">LimitCORE=infinity</span><br><span class="line"># Uncomment TasksMax if your systemd version supports it.</span><br><span class="line"># Only systemd 226 and above support this version.</span><br><span class="line">#TasksMax=infinity</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line"># set delegate yes so that systemd does not reset the cgroups of docker containers</span><br><span class="line">Delegate=yes</span><br><span class="line"># kill only the docker process, not all processes in the cgroup</span><br><span class="line">KillMode=process</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br><span class="line">docker info</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cgqabc.github.io/2019/11/19/git%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jfif">
+      <meta itemprop="name" content="Alan Cao">
+      <meta itemprop="description" content="Alan's Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alan's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/19/git%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">git简洁操作手册</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-19 09:39:39 / 修改时间：14:41:47" itemprop="dateCreated datePublished" datetime="2019-11-19T09:39:39+08:00">2019-11-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tool/" itemprop="url" rel="index">
+                    <span itemprop="name">tool</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="git简洁操作手册"><a href="#git简洁操作手册" class="headerlink" title="git简洁操作手册"></a>git简洁操作手册</h1><p>常用 Git 命令清单</p>
+<p>Workspace：工作区<br>Index / Stage：暂存区<br>Repository：仓库区（或本地仓库）<br>Remote：远程仓库</p>
+<h2 id="一、新建代码库"><a href="#一、新建代码库" class="headerlink" title="一、新建代码库"></a>一、新建代码库</h2><h3 id="在当前目录新建一个Git代码库"><a href="#在当前目录新建一个Git代码库" class="headerlink" title="在当前目录新建一个Git代码库"></a>在当前目录新建一个Git代码库</h3><p><code>$ git init</code></p>
+<h3 id="新建一个目录，将其初始化为Git代码库"><a href="#新建一个目录，将其初始化为Git代码库" class="headerlink" title="新建一个目录，将其初始化为Git代码库"></a>新建一个目录，将其初始化为Git代码库</h3><p><code>$ git init [project-name]</code></p>
+<h3 id="下载一个项目和它的整个代码历史"><a href="#下载一个项目和它的整个代码历史" class="headerlink" title="下载一个项目和它的整个代码历史"></a>下载一个项目和它的整个代码历史</h3><p><code>$ git clone [url]</code></p>
+<h2 id="二、配置"><a href="#二、配置" class="headerlink" title="二、配置"></a>二、配置</h2><p> Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。</p>
+<h3 id="显示当前的Git配置"><a href="#显示当前的Git配置" class="headerlink" title="显示当前的Git配置"></a>显示当前的Git配置</h3><p><code>$ git config --list</code></p>
+<h3 id="编辑Git配置文件"><a href="#编辑Git配置文件" class="headerlink" title="编辑Git配置文件"></a>编辑Git配置文件</h3><p><code>$ git config -e [--global]</code></p>
+<h3 id="设置提交代码时的用户信息"><a href="#设置提交代码时的用户信息" class="headerlink" title="设置提交代码时的用户信息"></a>设置提交代码时的用户信息</h3><p><code>$ git config [--global] user.name &quot;[name]&quot;</code><br><code>$ git config [--global] user.email &quot;[email address]&quot;</code></p>
+<h2 id="三、增加-删除文件"><a href="#三、增加-删除文件" class="headerlink" title="三、增加/删除文件"></a>三、增加/删除文件</h2><h3 id="添加指定文件到暂存区"><a href="#添加指定文件到暂存区" class="headerlink" title="添加指定文件到暂存区"></a>添加指定文件到暂存区</h3><p><code>$ git add [file1] [file2] ...</code></p>
+<h3 id="添加指定目录到暂存区，包括子目录"><a href="#添加指定目录到暂存区，包括子目录" class="headerlink" title="添加指定目录到暂存区，包括子目录"></a>添加指定目录到暂存区，包括子目录</h3><p><code>$ git add [dir]</code></p>
+<h3 id="添加当前目录的所有文件到暂存区"><a href="#添加当前目录的所有文件到暂存区" class="headerlink" title="添加当前目录的所有文件到暂存区"></a>添加当前目录的所有文件到暂存区</h3><p><code>$ git add .</code></p>
+<h3 id="添加每个变化前，都会要求确认-对于同一个文件的多处变化，可以实现分次提交"><a href="#添加每个变化前，都会要求确认-对于同一个文件的多处变化，可以实现分次提交" class="headerlink" title="添加每个变化前，都会要求确认,对于同一个文件的多处变化，可以实现分次提交"></a>添加每个变化前，都会要求确认,对于同一个文件的多处变化，可以实现分次提交</h3><p><code>$ git add -p</code></p>
+<h3 id="删除工作区文件，并且将这次删除放入暂存区"><a href="#删除工作区文件，并且将这次删除放入暂存区" class="headerlink" title="删除工作区文件，并且将这次删除放入暂存区"></a>删除工作区文件，并且将这次删除放入暂存区</h3><p><code>$ git rm [file1] [file2] ...</code></p>
+<h3 id="停止追踪指定文件，但该文件会保留在工作区"><a href="#停止追踪指定文件，但该文件会保留在工作区" class="headerlink" title="停止追踪指定文件，但该文件会保留在工作区"></a>停止追踪指定文件，但该文件会保留在工作区</h3><p><code>$ git rm --cached [file]</code></p>
+<h3 id="改名文件，并且将这个改名放入暂存区"><a href="#改名文件，并且将这个改名放入暂存区" class="headerlink" title="改名文件，并且将这个改名放入暂存区"></a>改名文件，并且将这个改名放入暂存区</h3><p><code>$ git mv [file-original] [file-renamed]</code></p>
+<h2 id="四、代码提交"><a href="#四、代码提交" class="headerlink" title="四、代码提交"></a>四、代码提交</h2><h3 id="提交暂存区到仓库区"><a href="#提交暂存区到仓库区" class="headerlink" title="提交暂存区到仓库区"></a>提交暂存区到仓库区</h3><p><code>$ git commit -m [message]</code></p>
+<h3 id="提交暂存区的指定文件到仓库区"><a href="#提交暂存区的指定文件到仓库区" class="headerlink" title="提交暂存区的指定文件到仓库区"></a>提交暂存区的指定文件到仓库区</h3><p><code>$ git commit [file1] [file2] ... -m [message]</code></p>
+<h3 id="提交工作区自上次commit之后的变化，直接到仓库区"><a href="#提交工作区自上次commit之后的变化，直接到仓库区" class="headerlink" title="提交工作区自上次commit之后的变化，直接到仓库区"></a>提交工作区自上次commit之后的变化，直接到仓库区</h3><p><code>$ git commit -a</code></p>
+<h3 id="提交时显示所有diff信息"><a href="#提交时显示所有diff信息" class="headerlink" title="提交时显示所有diff信息"></a>提交时显示所有diff信息</h3><p><code>$ git commit -v</code></p>
+<h3 id="使用一次新的commit，替代上一次提交"><a href="#使用一次新的commit，替代上一次提交" class="headerlink" title="使用一次新的commit，替代上一次提交"></a>使用一次新的commit，替代上一次提交</h3><h3 id="如果代码没有任何新变化，则用来改写上一次commit的提交信息"><a href="#如果代码没有任何新变化，则用来改写上一次commit的提交信息" class="headerlink" title="如果代码没有任何新变化，则用来改写上一次commit的提交信息"></a>如果代码没有任何新变化，则用来改写上一次commit的提交信息</h3><p><code>$ git commit --amend -m [message]</code></p>
+<h3 id="重做上一次commit，并包括指定文件的新变化"><a href="#重做上一次commit，并包括指定文件的新变化" class="headerlink" title="重做上一次commit，并包括指定文件的新变化"></a>重做上一次commit，并包括指定文件的新变化</h3><p><code>$ git commit --amend [file1] [file2] ...</code></p>
+<h2 id="五、分支"><a href="#五、分支" class="headerlink" title="五、分支"></a>五、分支</h2><h3 id="列出所有本地分支"><a href="#列出所有本地分支" class="headerlink" title="列出所有本地分支"></a>列出所有本地分支</h3><p><code>$ git branch</code></p>
+<h3 id="列出所有远程分支"><a href="#列出所有远程分支" class="headerlink" title="列出所有远程分支"></a>列出所有远程分支</h3><p><code>$ git branch -r</code></p>
+<h3 id="列出所有本地分支和远程分支"><a href="#列出所有本地分支和远程分支" class="headerlink" title="列出所有本地分支和远程分支"></a>列出所有本地分支和远程分支</h3><p><code>$ git branch -a</code></p>
+<h3 id="新建一个分支，但依然停留在当前分支"><a href="#新建一个分支，但依然停留在当前分支" class="headerlink" title="新建一个分支，但依然停留在当前分支"></a>新建一个分支，但依然停留在当前分支</h3><p><code>$ git branch [branch-name]</code></p>
+<h3 id="新建一个分支，并切换到该分支"><a href="#新建一个分支，并切换到该分支" class="headerlink" title="新建一个分支，并切换到该分支"></a>新建一个分支，并切换到该分支</h3><p><code>$ git checkout -b [branch]</code></p>
+<h3 id="新建一个分支，指向指定commit"><a href="#新建一个分支，指向指定commit" class="headerlink" title="新建一个分支，指向指定commit"></a>新建一个分支，指向指定commit</h3><p><code>$ git branch [branch] [commit]</code></p>
+<h3 id="新建一个分支，与指定的远程分支建立追踪关系"><a href="#新建一个分支，与指定的远程分支建立追踪关系" class="headerlink" title="新建一个分支，与指定的远程分支建立追踪关系"></a>新建一个分支，与指定的远程分支建立追踪关系</h3><p><code>$ git branch --track [branch] [remote-branch]</code></p>
+<h3 id="切换到指定分支，并更新工作区"><a href="#切换到指定分支，并更新工作区" class="headerlink" title="切换到指定分支，并更新工作区"></a>切换到指定分支，并更新工作区</h3><p><code>$ git checkout [branch-name]</code></p>
+<h3 id="切换到上一个分支"><a href="#切换到上一个分支" class="headerlink" title="切换到上一个分支"></a>切换到上一个分支</h3><p><code>$ git checkout -</code></p>
+<h3 id="建立追踪关系，在现有分支与指定的远程分支之间"><a href="#建立追踪关系，在现有分支与指定的远程分支之间" class="headerlink" title="建立追踪关系，在现有分支与指定的远程分支之间"></a>建立追踪关系，在现有分支与指定的远程分支之间</h3><p><code>$ git branch --set-upstream [branch] [remote-branch]</code></p>
+<h3 id="合并指定分支到当前分支"><a href="#合并指定分支到当前分支" class="headerlink" title="合并指定分支到当前分支"></a>合并指定分支到当前分支</h3><p><code>$ git merge [branch]</code></p>
+<h3 id="选择一个commit，合并进当前分支"><a href="#选择一个commit，合并进当前分支" class="headerlink" title="选择一个commit，合并进当前分支"></a>选择一个commit，合并进当前分支</h3><p><code>$ git cherry-pick [commit]</code></p>
+<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><p><code>$ git branch -d [branch-name]</code></p>
+<h3 id="删除远程分支"><a href="#删除远程分支" class="headerlink" title="删除远程分支"></a>删除远程分支</h3><p><code>$ git push origin --delete [branch-name]</code><br><code>$ git branch -dr [remote/branch]</code></p>
+<h2 id="六、标签"><a href="#六、标签" class="headerlink" title="六、标签"></a>六、标签</h2><h3 id="列出所有tag"><a href="#列出所有tag" class="headerlink" title="列出所有tag"></a>列出所有tag</h3><p><code>$ git tag</code></p>
+<h3 id="新建一个tag在当前commit"><a href="#新建一个tag在当前commit" class="headerlink" title="新建一个tag在当前commit"></a>新建一个tag在当前commit</h3><p><code>$ git tag [tag]</code></p>
+<h3 id="新建一个tag在指定commit"><a href="#新建一个tag在指定commit" class="headerlink" title="新建一个tag在指定commit"></a>新建一个tag在指定commit</h3><p><code>$ git tag [tag] [commit]</code></p>
+<h3 id="删除本地tag"><a href="#删除本地tag" class="headerlink" title="删除本地tag"></a>删除本地tag</h3><p><code>$ git tag -d [tag]</code></p>
+<h3 id="删除远程tag"><a href="#删除远程tag" class="headerlink" title="删除远程tag"></a>删除远程tag</h3><p><code>$ git push origin :refs/tags/[tagName]</code></p>
+<h3 id="查看tag信息"><a href="#查看tag信息" class="headerlink" title="查看tag信息"></a>查看tag信息</h3><p><code>$ git show [tag]</code></p>
+<h3 id="提交指定tag"><a href="#提交指定tag" class="headerlink" title="提交指定tag"></a>提交指定tag</h3><p><code>$ git push [remote] [tag]</code></p>
+<h3 id="提交所有tag"><a href="#提交所有tag" class="headerlink" title="提交所有tag"></a>提交所有tag</h3><p><code>$ git push [remote] --tags</code></p>
+<h3 id="新建一个分支，指向某个tag"><a href="#新建一个分支，指向某个tag" class="headerlink" title="新建一个分支，指向某个tag"></a>新建一个分支，指向某个tag</h3><p><code>$ git checkout -b [branch] [tag]</code></p>
+<h2 id="七、查看信息"><a href="#七、查看信息" class="headerlink" title="七、查看信息"></a>七、查看信息</h2><h3 id="显示有变更的文件"><a href="#显示有变更的文件" class="headerlink" title="显示有变更的文件"></a>显示有变更的文件</h3><p><code>$ git status</code></p>
+<h3 id="显示当前分支的版本历史"><a href="#显示当前分支的版本历史" class="headerlink" title="显示当前分支的版本历史"></a>显示当前分支的版本历史</h3><p><code>$ git log</code></p>
+<h3 id="显示commit历史，以及每次commit发生变更的文件"><a href="#显示commit历史，以及每次commit发生变更的文件" class="headerlink" title="显示commit历史，以及每次commit发生变更的文件"></a>显示commit历史，以及每次commit发生变更的文件</h3><p><code>$ git log --stat</code></p>
+<h3 id="搜索提交历史，根据关键词"><a href="#搜索提交历史，根据关键词" class="headerlink" title="搜索提交历史，根据关键词"></a>搜索提交历史，根据关键词</h3><p><code>$ git log -S [keyword]</code></p>
+<h3 id="显示某个commit之后的所有变动，每个commit占据一行"><a href="#显示某个commit之后的所有变动，每个commit占据一行" class="headerlink" title="显示某个commit之后的所有变动，每个commit占据一行"></a>显示某个commit之后的所有变动，每个commit占据一行</h3><p><code>$ git log [tag] HEAD --pretty=format:%s</code></p>
+<h3 id="显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件"><a href="#显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件" class="headerlink" title="显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件"></a>显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件</h3><p><code>$ git log [tag] HEAD --grep feature</code></p>
+<h3 id="显示某个文件的版本历史，包括文件改名"><a href="#显示某个文件的版本历史，包括文件改名" class="headerlink" title="显示某个文件的版本历史，包括文件改名"></a>显示某个文件的版本历史，包括文件改名</h3><p><code>$ git log --follow [file]
+$ git whatchanged [file]</code></p>
+<h3 id="显示指定文件相关的每一次diff"><a href="#显示指定文件相关的每一次diff" class="headerlink" title="显示指定文件相关的每一次diff"></a>显示指定文件相关的每一次diff</h3><p><code>$ git log -p [file]</code></p>
+<h3 id="显示过去5次提交"><a href="#显示过去5次提交" class="headerlink" title="显示过去5次提交"></a>显示过去5次提交</h3><p><code>$ git log -5 --pretty --oneline</code></p>
+<h3 id="显示所有提交过的用户，按提交次数排序"><a href="#显示所有提交过的用户，按提交次数排序" class="headerlink" title="显示所有提交过的用户，按提交次数排序"></a>显示所有提交过的用户，按提交次数排序</h3><p><code>$ git shortlog -sn</code></p>
+<h3 id="显示指定文件是什么人在什么时间修改过"><a href="#显示指定文件是什么人在什么时间修改过" class="headerlink" title="显示指定文件是什么人在什么时间修改过"></a>显示指定文件是什么人在什么时间修改过</h3><p><code>$ git blame [file]</code></p>
+<h3 id="显示暂存区和工作区的差异"><a href="#显示暂存区和工作区的差异" class="headerlink" title="显示暂存区和工作区的差异"></a>显示暂存区和工作区的差异</h3><p><code>$ git diff</code></p>
+<h3 id="显示暂存区和上一个commit的差异"><a href="#显示暂存区和上一个commit的差异" class="headerlink" title="显示暂存区和上一个commit的差异"></a>显示暂存区和上一个commit的差异</h3><p><code>$ git diff --cached [file]</code></p>
+<h3 id="显示工作区与当前分支最新commit之间的差异"><a href="#显示工作区与当前分支最新commit之间的差异" class="headerlink" title="显示工作区与当前分支最新commit之间的差异"></a>显示工作区与当前分支最新commit之间的差异</h3><p><code>$ git diff HEAD</code></p>
+<h3 id="显示两次提交之间的差异"><a href="#显示两次提交之间的差异" class="headerlink" title="显示两次提交之间的差异"></a>显示两次提交之间的差异</h3><p><code>$ git diff [first-branch]...[second-branch]</code></p>
+<h3 id="显示今天你写了多少行代码"><a href="#显示今天你写了多少行代码" class="headerlink" title="显示今天你写了多少行代码"></a>显示今天你写了多少行代码</h3><p><code>$ git diff --shortstat &quot;@{0 day ago}&quot;</code></p>
+<h3 id="显示某次提交的元数据和内容变化"><a href="#显示某次提交的元数据和内容变化" class="headerlink" title="显示某次提交的元数据和内容变化"></a>显示某次提交的元数据和内容变化</h3><p><code>$ git show [commit]</code></p>
+<h3 id="显示某次提交发生变化的文件"><a href="#显示某次提交发生变化的文件" class="headerlink" title="显示某次提交发生变化的文件"></a>显示某次提交发生变化的文件</h3><p><code>$ git show --name-only [commit]</code></p>
+<h3 id="显示某次提交时，某个文件的内容"><a href="#显示某次提交时，某个文件的内容" class="headerlink" title="显示某次提交时，某个文件的内容"></a>显示某次提交时，某个文件的内容</h3><p><code>$ git show [commit]:[filename]</code></p>
+<h3 id="显示当前分支的最近几次提交"><a href="#显示当前分支的最近几次提交" class="headerlink" title="显示当前分支的最近几次提交"></a>显示当前分支的最近几次提交</h3><p><code>$ git reflog</code></p>
+<h2 id="八、远程同步"><a href="#八、远程同步" class="headerlink" title="八、远程同步"></a>八、远程同步</h2><h3 id="下载远程仓库的所有变动"><a href="#下载远程仓库的所有变动" class="headerlink" title="下载远程仓库的所有变动"></a>下载远程仓库的所有变动</h3><p><code>$ git fetch [remote]</code></p>
+<h3 id="显示所有远程仓库"><a href="#显示所有远程仓库" class="headerlink" title="显示所有远程仓库"></a>显示所有远程仓库</h3><p><code>$ git remote -v</code></p>
+<h3 id="显示某个远程仓库的信息"><a href="#显示某个远程仓库的信息" class="headerlink" title="显示某个远程仓库的信息"></a>显示某个远程仓库的信息</h3><p><code>$ git remote show [remote]</code></p>
+<h3 id="增加一个新的远程仓库，并命名"><a href="#增加一个新的远程仓库，并命名" class="headerlink" title="增加一个新的远程仓库，并命名"></a>增加一个新的远程仓库，并命名</h3><p><code>$ git remote add [shortname] [url]</code></p>
+<h3 id="取回远程仓库的变化，并与本地分支合并"><a href="#取回远程仓库的变化，并与本地分支合并" class="headerlink" title="取回远程仓库的变化，并与本地分支合并"></a>取回远程仓库的变化，并与本地分支合并</h3><p><code>$ git pull [remote] [branch]</code></p>
+<h3 id="上传本地指定分支到远程仓库"><a href="#上传本地指定分支到远程仓库" class="headerlink" title="上传本地指定分支到远程仓库"></a>上传本地指定分支到远程仓库</h3><p><code>$ git push [remote] [branch]</code></p>
+<h3 id="强行推送当前分支到远程仓库，即使有冲突"><a href="#强行推送当前分支到远程仓库，即使有冲突" class="headerlink" title="强行推送当前分支到远程仓库，即使有冲突"></a>强行推送当前分支到远程仓库，即使有冲突</h3><p><code>$ git push [remote] --force</code></p>
+<h3 id="推送所有分支到远程仓库"><a href="#推送所有分支到远程仓库" class="headerlink" title="推送所有分支到远程仓库"></a>推送所有分支到远程仓库</h3><p><code>$ git push [remote] --all</code></p>
+<h2 id="九、撤销"><a href="#九、撤销" class="headerlink" title="九、撤销"></a>九、撤销</h2><h3 id="恢复暂存区的指定文件到工作区"><a href="#恢复暂存区的指定文件到工作区" class="headerlink" title="恢复暂存区的指定文件到工作区"></a>恢复暂存区的指定文件到工作区</h3><p><code>$ git checkout [file]</code></p>
+<h3 id="恢复某个commit的指定文件到暂存区和工作区"><a href="#恢复某个commit的指定文件到暂存区和工作区" class="headerlink" title="恢复某个commit的指定文件到暂存区和工作区"></a>恢复某个commit的指定文件到暂存区和工作区</h3><p><code>$ git checkout [commit] [file]</code></p>
+<h3 id="恢复暂存区的所有文件到工作区"><a href="#恢复暂存区的所有文件到工作区" class="headerlink" title="恢复暂存区的所有文件到工作区"></a>恢复暂存区的所有文件到工作区</h3><p><code>$ git checkout .</code></p>
+<h3 id="重置暂存区的指定文件，与上一次commit保持一致，但工作区不变"><a href="#重置暂存区的指定文件，与上一次commit保持一致，但工作区不变" class="headerlink" title="重置暂存区的指定文件，与上一次commit保持一致，但工作区不变"></a>重置暂存区的指定文件，与上一次commit保持一致，但工作区不变</h3><p><code>$ git reset [file]</code></p>
+<h3 id="重置暂存区与工作区，与上一次commit保持一致"><a href="#重置暂存区与工作区，与上一次commit保持一致" class="headerlink" title="重置暂存区与工作区，与上一次commit保持一致"></a>重置暂存区与工作区，与上一次commit保持一致</h3><p><code>$ git reset --hard</code></p>
+<h3 id="重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变"><a href="#重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变" class="headerlink" title="重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变"></a>重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变</h3><p><code>$ git reset [commit]</code></p>
+<h3 id="重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致"><a href="#重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致" class="headerlink" title="重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致"></a>重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致</h3><p><code>$ git reset --hard [commit]</code></p>
+<h3 id="重置当前HEAD为指定commit，但保持暂存区和工作区不变"><a href="#重置当前HEAD为指定commit，但保持暂存区和工作区不变" class="headerlink" title="重置当前HEAD为指定commit，但保持暂存区和工作区不变"></a>重置当前HEAD为指定commit，但保持暂存区和工作区不变</h3><p><code>$ git reset --keep [commit]</code></p>
+<h3 id="新建一个commit，用来撤销指定commit"><a href="#新建一个commit，用来撤销指定commit" class="headerlink" title="新建一个commit，用来撤销指定commit"></a>新建一个commit，用来撤销指定commit</h3><h3 id="后者的所有变化都将被前者抵消，并且应用到当前分支"><a href="#后者的所有变化都将被前者抵消，并且应用到当前分支" class="headerlink" title="后者的所有变化都将被前者抵消，并且应用到当前分支"></a>后者的所有变化都将被前者抵消，并且应用到当前分支</h3><p><code>$ git revert [commit]</code></p>
+<h3 id="暂时将未提交的变化移除，稍后再移入"><a href="#暂时将未提交的变化移除，稍后再移入" class="headerlink" title="暂时将未提交的变化移除，稍后再移入"></a>暂时将未提交的变化移除，稍后再移入</h3><p><code>$ git stash</code><br><code>$ git stash pop</code></p>
+<h2 id="十、其他"><a href="#十、其他" class="headerlink" title="十、其他"></a>十、其他</h2><h3 id="生成一个可供发布的压缩包"><a href="#生成一个可供发布的压缩包" class="headerlink" title="生成一个可供发布的压缩包"></a>生成一个可供发布的压缩包</h3><p><code>$ git archive</code></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cgqabc.github.io/2019/11/19/vim%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.jfif">
+      <meta itemprop="name" content="Alan Cao">
+      <meta itemprop="description" content="Alan's Blog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Alan's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/19/vim%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">VIM快捷操作</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-19 09:39:39 / 修改时间：14:22:09" itemprop="dateCreated datePublished" datetime="2019-11-19T09:39:39+08:00">2019-11-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tool/" itemprop="url" rel="index">
+                    <span itemprop="name">tool</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/vim/" itemprop="url" rel="index">
+                    <span itemprop="name">vim</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="VIM快捷操作"><a href="#VIM快捷操作" class="headerlink" title="VIM快捷操作"></a>VIM快捷操作</h1><h2 id="1、移动："><a href="#1、移动：" class="headerlink" title="1、移动："></a>1、移动：</h2><ul>
+<li>gg  到第一行</li>
+<li>NG  到第N行，如5G，也可以写成:5，到第五行</li>
+<li>G   到最后一行</li>
+<li>0   数字零，到行头</li>
+<li>^   到本行第一个不是blank字符的位置（所谓+ + blank字符就是空格，tab，换行，回车等）</li>
+<li>$   到本行行尾</li>
+<li>g_  到本行最后一个不是blank字符的位置</li>
+<li>w   到下一个单词的开头 如果单词是有blank等字符+ 分割，那需要使用W大写</li>
+<li>e   到下一个单词的结尾 如果单词是有blank等字符+ 分割，那需要使用E大写 </li>
+<li>%   匹配括号移动，包括(,[,{,需要把光标移动到括+ 号上)</li>
+<li><em>和# 匹配光标当前所在的单词，移动光标到下一个或+ 上一个。</em>是下一个，#是上一个</li>
+<li>0y$ 表示从行头拷贝到本行最后一个字符</li>
+<li>fa  到下一个为a的字符处，已可以fs到下个s的字符</li>
+<li>t,  到逗号前的第一个字符，逗号可以变成其他字符</li>
+<li>3fa 在当前行查找第三个出现的a</li>
+<li>dt” 删除所有的内容，直到遇到双引号”`</li>
+</ul>
+<h2 id="2、操作"><a href="#2、操作" class="headerlink" title="2、操作"></a>2、操作</h2><ul>
+<li>r  替换</li>
+<li>y  拷贝，yy拷贝当行</li>
+<li>v  可视化的选择</li>
+<li>P  粘贴在当前位置之前，小p表示粘贴在当前位置之+ 后</li>
+<li>d  删除，dd删除本行（剪切）</li>
+<li>gU 变大写</li>
+<li>gu 变小写 </li>
+<li>a  在光标后插入</li>
+<li>i  在光标前插入</li>
+<li>o  在当前行后插入一个新行</li>
+<li>O  大写o在当前行前面插入一个新行</li>
+<li>cw 替换从光标所在位置到最后一个单词结尾的字符</li>
+<li>.  小数点，可以重复上一次命令</li>
+<li>N<command> 重复某个命令N次，如3p粘贴3次，2dd删+ 除2行<h2 id="3、文件打开退出"><a href="#3、文件打开退出" class="headerlink" title="3、文件打开退出"></a>3、文件打开退出</h2></li>
+<li>:e  打开一个文件</li>
+<li>:w  保存</li>
+<li>:saveas 另存为</li>
+<li>:x,ZZ或wq  保存并退出，ZZ不需要输入冒号和回车</li>
+<li>:q! 退出不保存，:qa!强制退出</li>
+<li>:bn 和 :bq 打开多个文件时切换上下文件，:n到下一+ 个文件  <h2 id="4、区域选择"><a href="#4、区域选择" class="headerlink" title="4、区域选择"></a>4、区域选择</h2>action&gt;a<object> 和 <action>i<object><br>action可以是任何的命令，如 d (删除), y (拷贝), v (可以视模式选择)<br>object 可能是： w 一个单词， W 一个以空格为分隔的单词， s 一个句字， p 一个段落。也可以是一个特别的字符：”、 ‘、 )、 }、 ]<br>a是包括对象，i是不包括对象 </li>
+</ul>
+<h2 id="5、块操作"><a href="#5、块操作" class="headerlink" title="5、块操作"></a>5、块操作</h2><p>   ctrl + q (windows环境）或 ctrl + v （linux环境）<br>   如 0  ctrl+q I– [esc]<br>   输入0到行首，ctrl+q进入块操作，移动光标选择，I–插入”–”,按esc键让每行都生效<br>   在后面插入则A–</p>
+<h2 id="6、自动提示"><a href="#6、自动提示" class="headerlink" title="6、自动提示"></a>6、自动提示</h2><p>   ctrl + n和ctrl + p 在输入模式下，已经输入过的单词可用这个自动补齐</p>
+<h2 id="7、可视化操作"><a href="#7、可视化操作" class="headerlink" title="7、可视化操作"></a>7、可视化操作</h2><p>   用v（可按alt选某列）或V（整行操作）或ctrl+q（v）进入可视化操作后，选中操作行后可以执行<br>   J 把所有行连接起来变成一行<br>   &lt;或&gt; 左右缩进<br>   = 自动给缩进</p>
+<h2 id="8、分屏"><a href="#8、分屏" class="headerlink" title="8、分屏"></a>8、分屏</h2><ul>
+<li>:split  创建分屏，:vsplit 创建垂直分屏</li>
+<li>ctrl+w + 方向，用来切换分屏</li>
+<li>ctrl+w + _或| 最大化尺寸 |垂直分屏</li>
+<li>ctrl+w + +或- 增加尺寸<h2 id="9、其他操作"><a href="#9、其他操作" class="headerlink" title="9、其他操作"></a>9、其他操作</h2></li>
+<li>:set ff=dos 或ulinx 设置文件格式</li>
+<li>:set fileencoding=utf-8 设置文件编码</li>
+<li>:set list 设置显示模式，显示特殊符号</li>
+<li>:ga 显示所在字符的ascii值，分别以十进制，十六进+ 制，八进制表示。</li>
+<li>:% s/test/alan/g 全局替换，:% s#/app/log#/+ app/pty#g</li>
+<li>全局替换路径，用#隔开，也可以用其他符号</li>
+<li>u 撤销，uu恢复初始状态，ctrl+r 重做，恢复撤销的命令<br>在ggVG可视模块话操作下，直接按’=’可以自动缩进，实现代码格式化。python不建议使用</li>
+</ul>
+
       
     </div>
 
@@ -634,325 +953,6 @@ $6$PiqwS47AEB/oYsFW$Yy/EVqRqazmYwJqGYQukJMHepuHWYLkqX8b10XN6VPftmUAhHFMkA8aRkMCV
 <li>urllib — URL 处理模块</li>
 <li>urllib.request — 用于打开 URL 的可扩展库</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://cgqabc.github.io/2019/11/19/vim%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jfif">
-      <meta itemprop="name" content="Alan Cao">
-      <meta itemprop="description" content="Alan's Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alan's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/19/vim%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">VIM快捷操作</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-11-19 09:39:39 / 修改时间：14:22:09" itemprop="dateCreated datePublished" datetime="2019-11-19T09:39:39+08:00">2019-11-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/vim/" itemprop="url" rel="index">
-                    <span itemprop="name">vim</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="VIM快捷操作"><a href="#VIM快捷操作" class="headerlink" title="VIM快捷操作"></a>VIM快捷操作</h1><h2 id="1、移动："><a href="#1、移动：" class="headerlink" title="1、移动："></a>1、移动：</h2><ul>
-<li>gg  到第一行</li>
-<li>NG  到第N行，如5G，也可以写成:5，到第五行</li>
-<li>G   到最后一行</li>
-<li>0   数字零，到行头</li>
-<li>^   到本行第一个不是blank字符的位置（所谓+ + blank字符就是空格，tab，换行，回车等）</li>
-<li>$   到本行行尾</li>
-<li>g_  到本行最后一个不是blank字符的位置</li>
-<li>w   到下一个单词的开头 如果单词是有blank等字符+ 分割，那需要使用W大写</li>
-<li>e   到下一个单词的结尾 如果单词是有blank等字符+ 分割，那需要使用E大写 </li>
-<li>%   匹配括号移动，包括(,[,{,需要把光标移动到括+ 号上)</li>
-<li><em>和# 匹配光标当前所在的单词，移动光标到下一个或+ 上一个。</em>是下一个，#是上一个</li>
-<li>0y$ 表示从行头拷贝到本行最后一个字符</li>
-<li>fa  到下一个为a的字符处，已可以fs到下个s的字符</li>
-<li>t,  到逗号前的第一个字符，逗号可以变成其他字符</li>
-<li>3fa 在当前行查找第三个出现的a</li>
-<li>dt” 删除所有的内容，直到遇到双引号”`</li>
-</ul>
-<h2 id="2、操作"><a href="#2、操作" class="headerlink" title="2、操作"></a>2、操作</h2><ul>
-<li>r  替换</li>
-<li>y  拷贝，yy拷贝当行</li>
-<li>v  可视化的选择</li>
-<li>P  粘贴在当前位置之前，小p表示粘贴在当前位置之+ 后</li>
-<li>d  删除，dd删除本行（剪切）</li>
-<li>gU 变大写</li>
-<li>gu 变小写 </li>
-<li>a  在光标后插入</li>
-<li>i  在光标前插入</li>
-<li>o  在当前行后插入一个新行</li>
-<li>O  大写o在当前行前面插入一个新行</li>
-<li>cw 替换从光标所在位置到最后一个单词结尾的字符</li>
-<li>.  小数点，可以重复上一次命令</li>
-<li>N<command> 重复某个命令N次，如3p粘贴3次，2dd删+ 除2行<h2 id="3、文件打开退出"><a href="#3、文件打开退出" class="headerlink" title="3、文件打开退出"></a>3、文件打开退出</h2></li>
-<li>:e  打开一个文件</li>
-<li>:w  保存</li>
-<li>:saveas 另存为</li>
-<li>:x,ZZ或wq  保存并退出，ZZ不需要输入冒号和回车</li>
-<li>:q! 退出不保存，:qa!强制退出</li>
-<li>:bn 和 :bq 打开多个文件时切换上下文件，:n到下一+ 个文件  <h2 id="4、区域选择"><a href="#4、区域选择" class="headerlink" title="4、区域选择"></a>4、区域选择</h2>action&gt;a<object> 和 <action>i<object><br>action可以是任何的命令，如 d (删除), y (拷贝), v (可以视模式选择)<br>object 可能是： w 一个单词， W 一个以空格为分隔的单词， s 一个句字， p 一个段落。也可以是一个特别的字符：”、 ‘、 )、 }、 ]<br>a是包括对象，i是不包括对象 </li>
-</ul>
-<h2 id="5、块操作"><a href="#5、块操作" class="headerlink" title="5、块操作"></a>5、块操作</h2><p>   ctrl + q (windows环境）或 ctrl + v （linux环境）<br>   如 0  ctrl+q I– [esc]<br>   输入0到行首，ctrl+q进入块操作，移动光标选择，I–插入”–”,按esc键让每行都生效<br>   在后面插入则A–</p>
-<h2 id="6、自动提示"><a href="#6、自动提示" class="headerlink" title="6、自动提示"></a>6、自动提示</h2><p>   ctrl + n和ctrl + p 在输入模式下，已经输入过的单词可用这个自动补齐</p>
-<h2 id="7、可视化操作"><a href="#7、可视化操作" class="headerlink" title="7、可视化操作"></a>7、可视化操作</h2><p>   用v（可按alt选某列）或V（整行操作）或ctrl+q（v）进入可视化操作后，选中操作行后可以执行<br>   J 把所有行连接起来变成一行<br>   &lt;或&gt; 左右缩进<br>   = 自动给缩进</p>
-<h2 id="8、分屏"><a href="#8、分屏" class="headerlink" title="8、分屏"></a>8、分屏</h2><ul>
-<li>:split  创建分屏，:vsplit 创建垂直分屏</li>
-<li>ctrl+w + 方向，用来切换分屏</li>
-<li>ctrl+w + _或| 最大化尺寸 |垂直分屏</li>
-<li>ctrl+w + +或- 增加尺寸<h2 id="9、其他操作"><a href="#9、其他操作" class="headerlink" title="9、其他操作"></a>9、其他操作</h2></li>
-<li>:set ff=dos 或ulinx 设置文件格式</li>
-<li>:set fileencoding=utf-8 设置文件编码</li>
-<li>:set list 设置显示模式，显示特殊符号</li>
-<li>:ga 显示所在字符的ascii值，分别以十进制，十六进+ 制，八进制表示。</li>
-<li>:% s/test/alan/g 全局替换，:% s#/app/log#/+ app/pty#g</li>
-<li>全局替换路径，用#隔开，也可以用其他符号</li>
-<li>u 撤销，uu恢复初始状态，ctrl+r 重做，恢复撤销的命令<br>在ggVG可视模块话操作下，直接按’=’可以自动缩进，实现代码格式化。python不建议使用</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://cgqabc.github.io/2019/11/19/git%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/touxiang.jfif">
-      <meta itemprop="name" content="Alan Cao">
-      <meta itemprop="description" content="Alan's Blog">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Alan's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/19/git%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">git简洁操作手册</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2019-11-19 09:39:39 / 修改时间：14:41:47" itemprop="dateCreated datePublished" datetime="2019-11-19T09:39:39+08:00">2019-11-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tool/" itemprop="url" rel="index">
-                    <span itemprop="name">tool</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="git简洁操作手册"><a href="#git简洁操作手册" class="headerlink" title="git简洁操作手册"></a>git简洁操作手册</h1><p>常用 Git 命令清单</p>
-<p>Workspace：工作区<br>Index / Stage：暂存区<br>Repository：仓库区（或本地仓库）<br>Remote：远程仓库</p>
-<h2 id="一、新建代码库"><a href="#一、新建代码库" class="headerlink" title="一、新建代码库"></a>一、新建代码库</h2><h3 id="在当前目录新建一个Git代码库"><a href="#在当前目录新建一个Git代码库" class="headerlink" title="在当前目录新建一个Git代码库"></a>在当前目录新建一个Git代码库</h3><p><code>$ git init</code></p>
-<h3 id="新建一个目录，将其初始化为Git代码库"><a href="#新建一个目录，将其初始化为Git代码库" class="headerlink" title="新建一个目录，将其初始化为Git代码库"></a>新建一个目录，将其初始化为Git代码库</h3><p><code>$ git init [project-name]</code></p>
-<h3 id="下载一个项目和它的整个代码历史"><a href="#下载一个项目和它的整个代码历史" class="headerlink" title="下载一个项目和它的整个代码历史"></a>下载一个项目和它的整个代码历史</h3><p><code>$ git clone [url]</code></p>
-<h2 id="二、配置"><a href="#二、配置" class="headerlink" title="二、配置"></a>二、配置</h2><p> Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。</p>
-<h3 id="显示当前的Git配置"><a href="#显示当前的Git配置" class="headerlink" title="显示当前的Git配置"></a>显示当前的Git配置</h3><p><code>$ git config --list</code></p>
-<h3 id="编辑Git配置文件"><a href="#编辑Git配置文件" class="headerlink" title="编辑Git配置文件"></a>编辑Git配置文件</h3><p><code>$ git config -e [--global]</code></p>
-<h3 id="设置提交代码时的用户信息"><a href="#设置提交代码时的用户信息" class="headerlink" title="设置提交代码时的用户信息"></a>设置提交代码时的用户信息</h3><p><code>$ git config [--global] user.name &quot;[name]&quot;</code><br><code>$ git config [--global] user.email &quot;[email address]&quot;</code></p>
-<h2 id="三、增加-删除文件"><a href="#三、增加-删除文件" class="headerlink" title="三、增加/删除文件"></a>三、增加/删除文件</h2><h3 id="添加指定文件到暂存区"><a href="#添加指定文件到暂存区" class="headerlink" title="添加指定文件到暂存区"></a>添加指定文件到暂存区</h3><p><code>$ git add [file1] [file2] ...</code></p>
-<h3 id="添加指定目录到暂存区，包括子目录"><a href="#添加指定目录到暂存区，包括子目录" class="headerlink" title="添加指定目录到暂存区，包括子目录"></a>添加指定目录到暂存区，包括子目录</h3><p><code>$ git add [dir]</code></p>
-<h3 id="添加当前目录的所有文件到暂存区"><a href="#添加当前目录的所有文件到暂存区" class="headerlink" title="添加当前目录的所有文件到暂存区"></a>添加当前目录的所有文件到暂存区</h3><p><code>$ git add .</code></p>
-<h3 id="添加每个变化前，都会要求确认-对于同一个文件的多处变化，可以实现分次提交"><a href="#添加每个变化前，都会要求确认-对于同一个文件的多处变化，可以实现分次提交" class="headerlink" title="添加每个变化前，都会要求确认,对于同一个文件的多处变化，可以实现分次提交"></a>添加每个变化前，都会要求确认,对于同一个文件的多处变化，可以实现分次提交</h3><p><code>$ git add -p</code></p>
-<h3 id="删除工作区文件，并且将这次删除放入暂存区"><a href="#删除工作区文件，并且将这次删除放入暂存区" class="headerlink" title="删除工作区文件，并且将这次删除放入暂存区"></a>删除工作区文件，并且将这次删除放入暂存区</h3><p><code>$ git rm [file1] [file2] ...</code></p>
-<h3 id="停止追踪指定文件，但该文件会保留在工作区"><a href="#停止追踪指定文件，但该文件会保留在工作区" class="headerlink" title="停止追踪指定文件，但该文件会保留在工作区"></a>停止追踪指定文件，但该文件会保留在工作区</h3><p><code>$ git rm --cached [file]</code></p>
-<h3 id="改名文件，并且将这个改名放入暂存区"><a href="#改名文件，并且将这个改名放入暂存区" class="headerlink" title="改名文件，并且将这个改名放入暂存区"></a>改名文件，并且将这个改名放入暂存区</h3><p><code>$ git mv [file-original] [file-renamed]</code></p>
-<h2 id="四、代码提交"><a href="#四、代码提交" class="headerlink" title="四、代码提交"></a>四、代码提交</h2><h3 id="提交暂存区到仓库区"><a href="#提交暂存区到仓库区" class="headerlink" title="提交暂存区到仓库区"></a>提交暂存区到仓库区</h3><p><code>$ git commit -m [message]</code></p>
-<h3 id="提交暂存区的指定文件到仓库区"><a href="#提交暂存区的指定文件到仓库区" class="headerlink" title="提交暂存区的指定文件到仓库区"></a>提交暂存区的指定文件到仓库区</h3><p><code>$ git commit [file1] [file2] ... -m [message]</code></p>
-<h3 id="提交工作区自上次commit之后的变化，直接到仓库区"><a href="#提交工作区自上次commit之后的变化，直接到仓库区" class="headerlink" title="提交工作区自上次commit之后的变化，直接到仓库区"></a>提交工作区自上次commit之后的变化，直接到仓库区</h3><p><code>$ git commit -a</code></p>
-<h3 id="提交时显示所有diff信息"><a href="#提交时显示所有diff信息" class="headerlink" title="提交时显示所有diff信息"></a>提交时显示所有diff信息</h3><p><code>$ git commit -v</code></p>
-<h3 id="使用一次新的commit，替代上一次提交"><a href="#使用一次新的commit，替代上一次提交" class="headerlink" title="使用一次新的commit，替代上一次提交"></a>使用一次新的commit，替代上一次提交</h3><h3 id="如果代码没有任何新变化，则用来改写上一次commit的提交信息"><a href="#如果代码没有任何新变化，则用来改写上一次commit的提交信息" class="headerlink" title="如果代码没有任何新变化，则用来改写上一次commit的提交信息"></a>如果代码没有任何新变化，则用来改写上一次commit的提交信息</h3><p><code>$ git commit --amend -m [message]</code></p>
-<h3 id="重做上一次commit，并包括指定文件的新变化"><a href="#重做上一次commit，并包括指定文件的新变化" class="headerlink" title="重做上一次commit，并包括指定文件的新变化"></a>重做上一次commit，并包括指定文件的新变化</h3><p><code>$ git commit --amend [file1] [file2] ...</code></p>
-<h2 id="五、分支"><a href="#五、分支" class="headerlink" title="五、分支"></a>五、分支</h2><h3 id="列出所有本地分支"><a href="#列出所有本地分支" class="headerlink" title="列出所有本地分支"></a>列出所有本地分支</h3><p><code>$ git branch</code></p>
-<h3 id="列出所有远程分支"><a href="#列出所有远程分支" class="headerlink" title="列出所有远程分支"></a>列出所有远程分支</h3><p><code>$ git branch -r</code></p>
-<h3 id="列出所有本地分支和远程分支"><a href="#列出所有本地分支和远程分支" class="headerlink" title="列出所有本地分支和远程分支"></a>列出所有本地分支和远程分支</h3><p><code>$ git branch -a</code></p>
-<h3 id="新建一个分支，但依然停留在当前分支"><a href="#新建一个分支，但依然停留在当前分支" class="headerlink" title="新建一个分支，但依然停留在当前分支"></a>新建一个分支，但依然停留在当前分支</h3><p><code>$ git branch [branch-name]</code></p>
-<h3 id="新建一个分支，并切换到该分支"><a href="#新建一个分支，并切换到该分支" class="headerlink" title="新建一个分支，并切换到该分支"></a>新建一个分支，并切换到该分支</h3><p><code>$ git checkout -b [branch]</code></p>
-<h3 id="新建一个分支，指向指定commit"><a href="#新建一个分支，指向指定commit" class="headerlink" title="新建一个分支，指向指定commit"></a>新建一个分支，指向指定commit</h3><p><code>$ git branch [branch] [commit]</code></p>
-<h3 id="新建一个分支，与指定的远程分支建立追踪关系"><a href="#新建一个分支，与指定的远程分支建立追踪关系" class="headerlink" title="新建一个分支，与指定的远程分支建立追踪关系"></a>新建一个分支，与指定的远程分支建立追踪关系</h3><p><code>$ git branch --track [branch] [remote-branch]</code></p>
-<h3 id="切换到指定分支，并更新工作区"><a href="#切换到指定分支，并更新工作区" class="headerlink" title="切换到指定分支，并更新工作区"></a>切换到指定分支，并更新工作区</h3><p><code>$ git checkout [branch-name]</code></p>
-<h3 id="切换到上一个分支"><a href="#切换到上一个分支" class="headerlink" title="切换到上一个分支"></a>切换到上一个分支</h3><p><code>$ git checkout -</code></p>
-<h3 id="建立追踪关系，在现有分支与指定的远程分支之间"><a href="#建立追踪关系，在现有分支与指定的远程分支之间" class="headerlink" title="建立追踪关系，在现有分支与指定的远程分支之间"></a>建立追踪关系，在现有分支与指定的远程分支之间</h3><p><code>$ git branch --set-upstream [branch] [remote-branch]</code></p>
-<h3 id="合并指定分支到当前分支"><a href="#合并指定分支到当前分支" class="headerlink" title="合并指定分支到当前分支"></a>合并指定分支到当前分支</h3><p><code>$ git merge [branch]</code></p>
-<h3 id="选择一个commit，合并进当前分支"><a href="#选择一个commit，合并进当前分支" class="headerlink" title="选择一个commit，合并进当前分支"></a>选择一个commit，合并进当前分支</h3><p><code>$ git cherry-pick [commit]</code></p>
-<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><p><code>$ git branch -d [branch-name]</code></p>
-<h3 id="删除远程分支"><a href="#删除远程分支" class="headerlink" title="删除远程分支"></a>删除远程分支</h3><p><code>$ git push origin --delete [branch-name]</code><br><code>$ git branch -dr [remote/branch]</code></p>
-<h2 id="六、标签"><a href="#六、标签" class="headerlink" title="六、标签"></a>六、标签</h2><h3 id="列出所有tag"><a href="#列出所有tag" class="headerlink" title="列出所有tag"></a>列出所有tag</h3><p><code>$ git tag</code></p>
-<h3 id="新建一个tag在当前commit"><a href="#新建一个tag在当前commit" class="headerlink" title="新建一个tag在当前commit"></a>新建一个tag在当前commit</h3><p><code>$ git tag [tag]</code></p>
-<h3 id="新建一个tag在指定commit"><a href="#新建一个tag在指定commit" class="headerlink" title="新建一个tag在指定commit"></a>新建一个tag在指定commit</h3><p><code>$ git tag [tag] [commit]</code></p>
-<h3 id="删除本地tag"><a href="#删除本地tag" class="headerlink" title="删除本地tag"></a>删除本地tag</h3><p><code>$ git tag -d [tag]</code></p>
-<h3 id="删除远程tag"><a href="#删除远程tag" class="headerlink" title="删除远程tag"></a>删除远程tag</h3><p><code>$ git push origin :refs/tags/[tagName]</code></p>
-<h3 id="查看tag信息"><a href="#查看tag信息" class="headerlink" title="查看tag信息"></a>查看tag信息</h3><p><code>$ git show [tag]</code></p>
-<h3 id="提交指定tag"><a href="#提交指定tag" class="headerlink" title="提交指定tag"></a>提交指定tag</h3><p><code>$ git push [remote] [tag]</code></p>
-<h3 id="提交所有tag"><a href="#提交所有tag" class="headerlink" title="提交所有tag"></a>提交所有tag</h3><p><code>$ git push [remote] --tags</code></p>
-<h3 id="新建一个分支，指向某个tag"><a href="#新建一个分支，指向某个tag" class="headerlink" title="新建一个分支，指向某个tag"></a>新建一个分支，指向某个tag</h3><p><code>$ git checkout -b [branch] [tag]</code></p>
-<h2 id="七、查看信息"><a href="#七、查看信息" class="headerlink" title="七、查看信息"></a>七、查看信息</h2><h3 id="显示有变更的文件"><a href="#显示有变更的文件" class="headerlink" title="显示有变更的文件"></a>显示有变更的文件</h3><p><code>$ git status</code></p>
-<h3 id="显示当前分支的版本历史"><a href="#显示当前分支的版本历史" class="headerlink" title="显示当前分支的版本历史"></a>显示当前分支的版本历史</h3><p><code>$ git log</code></p>
-<h3 id="显示commit历史，以及每次commit发生变更的文件"><a href="#显示commit历史，以及每次commit发生变更的文件" class="headerlink" title="显示commit历史，以及每次commit发生变更的文件"></a>显示commit历史，以及每次commit发生变更的文件</h3><p><code>$ git log --stat</code></p>
-<h3 id="搜索提交历史，根据关键词"><a href="#搜索提交历史，根据关键词" class="headerlink" title="搜索提交历史，根据关键词"></a>搜索提交历史，根据关键词</h3><p><code>$ git log -S [keyword]</code></p>
-<h3 id="显示某个commit之后的所有变动，每个commit占据一行"><a href="#显示某个commit之后的所有变动，每个commit占据一行" class="headerlink" title="显示某个commit之后的所有变动，每个commit占据一行"></a>显示某个commit之后的所有变动，每个commit占据一行</h3><p><code>$ git log [tag] HEAD --pretty=format:%s</code></p>
-<h3 id="显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件"><a href="#显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件" class="headerlink" title="显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件"></a>显示某个commit之后的所有变动，其”提交说明”必须符合搜索条件</h3><p><code>$ git log [tag] HEAD --grep feature</code></p>
-<h3 id="显示某个文件的版本历史，包括文件改名"><a href="#显示某个文件的版本历史，包括文件改名" class="headerlink" title="显示某个文件的版本历史，包括文件改名"></a>显示某个文件的版本历史，包括文件改名</h3><p><code>$ git log --follow [file]
-$ git whatchanged [file]</code></p>
-<h3 id="显示指定文件相关的每一次diff"><a href="#显示指定文件相关的每一次diff" class="headerlink" title="显示指定文件相关的每一次diff"></a>显示指定文件相关的每一次diff</h3><p><code>$ git log -p [file]</code></p>
-<h3 id="显示过去5次提交"><a href="#显示过去5次提交" class="headerlink" title="显示过去5次提交"></a>显示过去5次提交</h3><p><code>$ git log -5 --pretty --oneline</code></p>
-<h3 id="显示所有提交过的用户，按提交次数排序"><a href="#显示所有提交过的用户，按提交次数排序" class="headerlink" title="显示所有提交过的用户，按提交次数排序"></a>显示所有提交过的用户，按提交次数排序</h3><p><code>$ git shortlog -sn</code></p>
-<h3 id="显示指定文件是什么人在什么时间修改过"><a href="#显示指定文件是什么人在什么时间修改过" class="headerlink" title="显示指定文件是什么人在什么时间修改过"></a>显示指定文件是什么人在什么时间修改过</h3><p><code>$ git blame [file]</code></p>
-<h3 id="显示暂存区和工作区的差异"><a href="#显示暂存区和工作区的差异" class="headerlink" title="显示暂存区和工作区的差异"></a>显示暂存区和工作区的差异</h3><p><code>$ git diff</code></p>
-<h3 id="显示暂存区和上一个commit的差异"><a href="#显示暂存区和上一个commit的差异" class="headerlink" title="显示暂存区和上一个commit的差异"></a>显示暂存区和上一个commit的差异</h3><p><code>$ git diff --cached [file]</code></p>
-<h3 id="显示工作区与当前分支最新commit之间的差异"><a href="#显示工作区与当前分支最新commit之间的差异" class="headerlink" title="显示工作区与当前分支最新commit之间的差异"></a>显示工作区与当前分支最新commit之间的差异</h3><p><code>$ git diff HEAD</code></p>
-<h3 id="显示两次提交之间的差异"><a href="#显示两次提交之间的差异" class="headerlink" title="显示两次提交之间的差异"></a>显示两次提交之间的差异</h3><p><code>$ git diff [first-branch]...[second-branch]</code></p>
-<h3 id="显示今天你写了多少行代码"><a href="#显示今天你写了多少行代码" class="headerlink" title="显示今天你写了多少行代码"></a>显示今天你写了多少行代码</h3><p><code>$ git diff --shortstat &quot;@{0 day ago}&quot;</code></p>
-<h3 id="显示某次提交的元数据和内容变化"><a href="#显示某次提交的元数据和内容变化" class="headerlink" title="显示某次提交的元数据和内容变化"></a>显示某次提交的元数据和内容变化</h3><p><code>$ git show [commit]</code></p>
-<h3 id="显示某次提交发生变化的文件"><a href="#显示某次提交发生变化的文件" class="headerlink" title="显示某次提交发生变化的文件"></a>显示某次提交发生变化的文件</h3><p><code>$ git show --name-only [commit]</code></p>
-<h3 id="显示某次提交时，某个文件的内容"><a href="#显示某次提交时，某个文件的内容" class="headerlink" title="显示某次提交时，某个文件的内容"></a>显示某次提交时，某个文件的内容</h3><p><code>$ git show [commit]:[filename]</code></p>
-<h3 id="显示当前分支的最近几次提交"><a href="#显示当前分支的最近几次提交" class="headerlink" title="显示当前分支的最近几次提交"></a>显示当前分支的最近几次提交</h3><p><code>$ git reflog</code></p>
-<h2 id="八、远程同步"><a href="#八、远程同步" class="headerlink" title="八、远程同步"></a>八、远程同步</h2><h3 id="下载远程仓库的所有变动"><a href="#下载远程仓库的所有变动" class="headerlink" title="下载远程仓库的所有变动"></a>下载远程仓库的所有变动</h3><p><code>$ git fetch [remote]</code></p>
-<h3 id="显示所有远程仓库"><a href="#显示所有远程仓库" class="headerlink" title="显示所有远程仓库"></a>显示所有远程仓库</h3><p><code>$ git remote -v</code></p>
-<h3 id="显示某个远程仓库的信息"><a href="#显示某个远程仓库的信息" class="headerlink" title="显示某个远程仓库的信息"></a>显示某个远程仓库的信息</h3><p><code>$ git remote show [remote]</code></p>
-<h3 id="增加一个新的远程仓库，并命名"><a href="#增加一个新的远程仓库，并命名" class="headerlink" title="增加一个新的远程仓库，并命名"></a>增加一个新的远程仓库，并命名</h3><p><code>$ git remote add [shortname] [url]</code></p>
-<h3 id="取回远程仓库的变化，并与本地分支合并"><a href="#取回远程仓库的变化，并与本地分支合并" class="headerlink" title="取回远程仓库的变化，并与本地分支合并"></a>取回远程仓库的变化，并与本地分支合并</h3><p><code>$ git pull [remote] [branch]</code></p>
-<h3 id="上传本地指定分支到远程仓库"><a href="#上传本地指定分支到远程仓库" class="headerlink" title="上传本地指定分支到远程仓库"></a>上传本地指定分支到远程仓库</h3><p><code>$ git push [remote] [branch]</code></p>
-<h3 id="强行推送当前分支到远程仓库，即使有冲突"><a href="#强行推送当前分支到远程仓库，即使有冲突" class="headerlink" title="强行推送当前分支到远程仓库，即使有冲突"></a>强行推送当前分支到远程仓库，即使有冲突</h3><p><code>$ git push [remote] --force</code></p>
-<h3 id="推送所有分支到远程仓库"><a href="#推送所有分支到远程仓库" class="headerlink" title="推送所有分支到远程仓库"></a>推送所有分支到远程仓库</h3><p><code>$ git push [remote] --all</code></p>
-<h2 id="九、撤销"><a href="#九、撤销" class="headerlink" title="九、撤销"></a>九、撤销</h2><h3 id="恢复暂存区的指定文件到工作区"><a href="#恢复暂存区的指定文件到工作区" class="headerlink" title="恢复暂存区的指定文件到工作区"></a>恢复暂存区的指定文件到工作区</h3><p><code>$ git checkout [file]</code></p>
-<h3 id="恢复某个commit的指定文件到暂存区和工作区"><a href="#恢复某个commit的指定文件到暂存区和工作区" class="headerlink" title="恢复某个commit的指定文件到暂存区和工作区"></a>恢复某个commit的指定文件到暂存区和工作区</h3><p><code>$ git checkout [commit] [file]</code></p>
-<h3 id="恢复暂存区的所有文件到工作区"><a href="#恢复暂存区的所有文件到工作区" class="headerlink" title="恢复暂存区的所有文件到工作区"></a>恢复暂存区的所有文件到工作区</h3><p><code>$ git checkout .</code></p>
-<h3 id="重置暂存区的指定文件，与上一次commit保持一致，但工作区不变"><a href="#重置暂存区的指定文件，与上一次commit保持一致，但工作区不变" class="headerlink" title="重置暂存区的指定文件，与上一次commit保持一致，但工作区不变"></a>重置暂存区的指定文件，与上一次commit保持一致，但工作区不变</h3><p><code>$ git reset [file]</code></p>
-<h3 id="重置暂存区与工作区，与上一次commit保持一致"><a href="#重置暂存区与工作区，与上一次commit保持一致" class="headerlink" title="重置暂存区与工作区，与上一次commit保持一致"></a>重置暂存区与工作区，与上一次commit保持一致</h3><p><code>$ git reset --hard</code></p>
-<h3 id="重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变"><a href="#重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变" class="headerlink" title="重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变"></a>重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变</h3><p><code>$ git reset [commit]</code></p>
-<h3 id="重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致"><a href="#重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致" class="headerlink" title="重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致"></a>重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致</h3><p><code>$ git reset --hard [commit]</code></p>
-<h3 id="重置当前HEAD为指定commit，但保持暂存区和工作区不变"><a href="#重置当前HEAD为指定commit，但保持暂存区和工作区不变" class="headerlink" title="重置当前HEAD为指定commit，但保持暂存区和工作区不变"></a>重置当前HEAD为指定commit，但保持暂存区和工作区不变</h3><p><code>$ git reset --keep [commit]</code></p>
-<h3 id="新建一个commit，用来撤销指定commit"><a href="#新建一个commit，用来撤销指定commit" class="headerlink" title="新建一个commit，用来撤销指定commit"></a>新建一个commit，用来撤销指定commit</h3><h3 id="后者的所有变化都将被前者抵消，并且应用到当前分支"><a href="#后者的所有变化都将被前者抵消，并且应用到当前分支" class="headerlink" title="后者的所有变化都将被前者抵消，并且应用到当前分支"></a>后者的所有变化都将被前者抵消，并且应用到当前分支</h3><p><code>$ git revert [commit]</code></p>
-<h3 id="暂时将未提交的变化移除，稍后再移入"><a href="#暂时将未提交的变化移除，稍后再移入" class="headerlink" title="暂时将未提交的变化移除，稍后再移入"></a>暂时将未提交的变化移除，稍后再移入</h3><p><code>$ git stash</code><br><code>$ git stash pop</code></p>
-<h2 id="十、其他"><a href="#十、其他" class="headerlink" title="十、其他"></a>十、其他</h2><h3 id="生成一个可供发布的压缩包"><a href="#生成一个可供发布的压缩包" class="headerlink" title="生成一个可供发布的压缩包"></a>生成一个可供发布的压缩包</h3><p><code>$ git archive</code></p>
 
       
     </div>
